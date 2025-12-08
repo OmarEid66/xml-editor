@@ -1,8 +1,5 @@
 class XMLFormatter:
-    def format(self, xml_string):
-        xml_string = xml_string.replace('\n', '').strip()
-        
-        # Tokenize
+    def format(self, xml_string): 
         tokens = []
         i = 0
         length = len(xml_string)
@@ -19,47 +16,49 @@ class XMLFormatter:
                 j = i
                 while j < length and xml_string[j] != '<':
                     j += 1
-                text = xml_string[i:j].strip()
-                if text:
-                    tokens.append(text)
+                raw_text = xml_string[i:j]
+                
+                if not raw_text.strip():
+                    i = j
+                    continue
+                tokens.append(raw_text.strip())
                 i = j
-
-        formatted_lines = []
-        indent_level = 0
-        indent_str = "    " 
-        
+                
+        formatted = []
+        level = 0
+        indentation = "    " 
         k = 0
         while k < len(tokens):
             token = tokens[k]
             
             # Closing Tag 
             if token.startswith('</'):
-                indent_level = max(0, indent_level - 1)
-                formatted_lines.append((indent_str * indent_level) + token)
+                level = max(0, level - 1)
+                formatted.append((indentation * level) + token)
                 
             # Opening Tag
             elif token.startswith('<') and not token.startswith('</'):
                 if (k + 2 < len(tokens) and 
                     not tokens[k+1].startswith('<') and 
-                    tokens[k+2].startswith('</')):      
-                    
-                    line = (indent_str * indent_level) + tokens[k] + tokens[k+1] + tokens[k+2]
-                    formatted_lines.append(line)
+                    tokens[k+2].startswith('</') and len(tokens[k+1]) < 70 and '\n' not in tokens[k+1]): 
+                    line = (indentation * level) + tokens[k] + tokens[k+1] + tokens[k+2]
+                    formatted.append(line)
                     k += 2 
-                    
                 else:
-                    formatted_lines.append((indent_str * indent_level) + token)
-                    indent_level += 1
-            
-            # Text Content (for long text or mixed content)
+                    formatted.append((indentation * level) + token)
+                    level += 1
+            # Text Content
             else:
-                formatted_lines.append((indent_str * indent_level) + token)
-            
+                lines = token.split('\n')
+                aligned_lines = []
+                for line in lines:
+                    stripped_line = line.strip()
+                    if stripped_line:
+                        aligned_lines.append((indentation * level) + stripped_line)
+                formatted.append("\n".join(aligned_lines))
             k += 1
-            
-        return "\n".join(formatted_lines)
-
-# Testing the Code
+        return "\n".join(formatted)
+# --- Test ---
 input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <users>
 <user>
@@ -68,11 +67,101 @@ input_xml = """<?xml version="1.0" encoding="UTF-8"?>
 <posts>
 <post>
 <body>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 </body>
 <topics>
 <topic>
-economy"""
+economy
+</topic>
+<topic>
+finance
+</topic>
+</topics>
+</post>
+<post>
+<body>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+</body>
+<topics>
+<topic>
+solar_energy
+</topic>
+</topics>
+</post>
+</posts>
+<followers>
+<follower>
+<id>2</id>
+</follower>
+<follower>
+<id>3</id>
+</follower>
+</followers>
+<followings>
+<following>
+<id>2</id>
+</following>
+<following>
+<id>3</id>
+</following>
+</followings>
+</user>
+<user>
+<id>2</id>
+<name>Yasser Ahmed</name>
+<posts>
+<post>
+<body>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+</body>
+<topics>
+<topic>
+education
+</topic>
+</topics>
+</post>
+</posts>
+<followers>
+<follower>
+<id>1</id>
+</follower>
+</followers>
+<followings>
+<following>
+<id>1</id>
+</following>
+</followings>
+</user>
+<user>
+<id>3</id>
+<name>Mohamed Sherif</name>
+<posts>
+<post>
+<body>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+</body>
+<topics>
+<topic>
+sports
+</topic>
+</topics>
+</post>
+</posts>
+<followers>
+<follower>
+<id>1</id>
+</follower>
+</followers>
+<followings>
+<following>
+<id>1</id>
+</following>
+</followings>
+</user>
+</users>"""
 formatter = XMLFormatter()
-output = formatter.format(input_xml)
-print(output)
+print(formatter.format(input_xml))
