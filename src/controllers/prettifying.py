@@ -1,9 +1,12 @@
-class XMLFormatter:
+import sys
+
+class XMLcontroller:
     def format(self, xml_string): 
         tokens = []
         i = 0
         length = len(xml_string)
         
+        # Tokenization
         while i < length:
             if xml_string[i] == '<':
                 j = xml_string.find('>', i)
@@ -24,23 +27,26 @@ class XMLFormatter:
                 tokens.append(raw_text.strip())
                 i = j
                 
+        # Formatting
         formatted = []
         level = 0
         indentation = "    " 
         k = 0
         while k < len(tokens):
             token = tokens[k]
-            
             # Closing Tag 
             if token.startswith('</'):
                 level = max(0, level - 1)
-                formatted.append((indentation * level) + token)
-                
+                formatted.append((indentation * level) + token) 
             # Opening Tag
             elif token.startswith('<') and not token.startswith('</'):
+                # Check for "Leaf Node" (Open -> Text -> Close)
                 if (k + 2 < len(tokens) and 
                     not tokens[k+1].startswith('<') and 
-                    tokens[k+2].startswith('</') and len(tokens[k+1]) < 70 and '\n' not in tokens[k+1]): 
+                    tokens[k+2].startswith('</') and 
+                    len(tokens[k+1]) < 70 and 
+                    '\n' not in tokens[k+1]): 
+                    
                     line = (indentation * level) + tokens[k] + tokens[k+1] + tokens[k+2]
                     formatted.append(line)
                     k += 2 
@@ -56,112 +62,67 @@ class XMLFormatter:
                     if stripped_line:
                         aligned_lines.append((indentation * level) + stripped_line)
                 formatted.append("\n".join(aligned_lines))
-            k += 1
+            
+            k += 1            
         return "\n".join(formatted)
-# --- Test ---
-input_xml = """<?xml version="1.0" encoding="UTF-8"?>
-<users>
-<user>
-<id>1</id>
-<name>Ahmed Ali</name>
-<posts>
-<post>
-<body>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-</body>
-<topics>
-<topic>
-economy
-</topic>
-<topic>
-finance
-</topic>
-</topics>
-</post>
-<post>
-<body>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-</body>
-<topics>
-<topic>
-solar_energy
-</topic>
-</topics>
-</post>
-</posts>
-<followers>
-<follower>
-<id>2</id>
-</follower>
-<follower>
-<id>3</id>
-</follower>
-</followers>
-<followings>
-<following>
-<id>2</id>
-</following>
-<following>
-<id>3</id>
-</following>
-</followings>
-</user>
-<user>
-<id>2</id>
-<name>Yasser Ahmed</name>
-<posts>
-<post>
-<body>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-</body>
-<topics>
-<topic>
-education
-</topic>
-</topics>
-</post>
-</posts>
-<followers>
-<follower>
-<id>1</id>
-</follower>
-</followers>
-<followings>
-<following>
-<id>1</id>
-</following>
-</followings>
-</user>
-<user>
-<id>3</id>
-<name>Mohamed Sherif</name>
-<posts>
-<post>
-<body>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-</body>
-<topics>
-<topic>
-sports
-</topic>
-</topics>
-</post>
-</posts>
-<followers>
-<follower>
-<id>1</id>
-</follower>
-</followers>
-<followings>
-<following>
-<id>1</id>
-</following>
-</followings>
-</user>
-</users>"""
-formatter = XMLFormatter()
-print(formatter.format(input_xml))
+
+# --- CLI Logic ---
+def read_file(filepath):
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            return f.read()
+    except FileNotFoundError:
+        print(f"Error: The file '{filepath}' was not found.")
+        sys.exit(1)
+
+def write_file(filepath, content):
+    try:
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(content)
+        print(f"Success: Formatted XML saved to '{filepath}'")
+    except Exception as e:
+        print(f"Error writing to file: {e}")
+        sys.exit(1)
+
+def main():
+    args = sys.argv
+    
+    if len(args) < 2:
+        print("Usage: python xml_editor.py format -i <input_file> -o <output_file>")
+        return
+
+    command = args[1]
+
+    if command == "format":
+        # Parse arguments manually using a simple loop (Array Traversal)
+        input_file = None
+        output_file = None
+        
+        # Iterate starting from index 2 to find flags
+        for idx in range(2, len(args)):
+            if args[idx] == "-i" and idx + 1 < len(args):
+                input_file = args[idx + 1]
+            elif args[idx] == "-o" and idx + 1 < len(args):
+                output_file = args[idx + 1]
+        
+        # Validation
+        if not input_file or not output_file:
+            print("Error: Missing arguments.")
+            print("Usage: python xml_editor.py format -i <input_file> -o <output_file>")
+            return
+
+        # Execution Flow
+        print(f"Reading from: {input_file}...")
+        xml_content = read_file(input_file)
+        
+        formatter = XMLFormatter()
+        formatted_xml = formatter.format(xml_content)
+        
+        write_file(output_file, formatted_xml)
+
+    else:
+        print(f"Unknown command: {command}")
+        print("Available commands: format")
+
+if __name__ == "__main__":
+    main()
