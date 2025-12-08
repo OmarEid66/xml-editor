@@ -115,7 +115,7 @@ def main():
         print(f"Reading from: {input_file}...")
         xml_content = read_file(input_file)
         
-        formatter = XMLFormatter()
+        formatter = XMLcontroller()
         formatted_xml = formatter.format(xml_content)
         
         write_file(output_file, formatted_xml)
