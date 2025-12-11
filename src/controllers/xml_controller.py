@@ -460,15 +460,20 @@ class XMLController:
             tokens.append(self.unpack_u16(data, offset))
             offset += 2
 
-        # Expand in REVERSE creation order
-        for merged_token, t1, t2 in reversed(merges):
-            new_tokens = []
-            for t in tokens:
-                if t == merged_token:
-                    new_tokens.append(t1)
-                    new_tokens.append(t2)
+        # Efficient expansion using a merge map and stack
+        merge_map = {merged: (t1, t2) for (merged, t1, t2) in merges}
+        expanded_tokens = []
+        for t in tokens:
+            stack = [t]
+            while stack:
+                current = stack.pop()
+                if current in merge_map:
+                    t1, t2 = merge_map[current]
+                    # Push in reverse order so t1 is processed before t2
+                    stack.append(t2)
+                    stack.append(t1)
                 else:
-                    new_tokens.append(t)
-            tokens = new_tokens
+                    expanded_tokens.append(current)
+        tokens = expanded_tokens
 
         self.xml_string = ''.join(chr(t) for t in tokens)
