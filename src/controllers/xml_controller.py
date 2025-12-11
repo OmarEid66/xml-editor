@@ -409,7 +409,10 @@ class XMLController:
         for t in tokens:
             out.extend(self.pack_u16(t))
 
-        return bytes([b if b < 256 else 63 for b in out]).decode("latin-1")
+        # Ensure all values are valid bytes (0-255); raise error if not
+        if any(b < 0 or b > 255 for b in out):
+            raise ValueError("Byte value out of range (0-255) in output; possible bug in packing logic.")
+        return bytes(out).decode("latin-1")
 
     def decompress_from_string(self, compressed_string: str) -> None:
         """
