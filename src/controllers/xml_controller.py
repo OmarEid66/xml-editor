@@ -369,12 +369,8 @@ class XMLController:
             if not pair_counts:
                 break
 
-            most_key = None
-            most_count = 0
-            for key, count in pair_counts.items():
-                if count > most_count:
-                    most_count = count
-                    most_key = key
+            # Use max() to find the most frequent pair efficiently
+            most_key, most_count = max(pair_counts.items(), key=lambda item: item[1])
 
             if most_count < 2:
                 break
