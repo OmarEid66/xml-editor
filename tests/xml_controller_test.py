@@ -3,6 +3,7 @@ Unit tests for the XMLController class.
 This test suite covers formatting, indentation, text wrapping, and minification.
 """
 
+import tempfile
 import unittest
 import sys
 import os
