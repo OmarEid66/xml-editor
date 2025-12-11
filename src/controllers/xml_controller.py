@@ -49,19 +49,19 @@ class XMLController:
 
 
     @staticmethod
-    def pack_u16(n):
+    def pack_u16(n: int) -> bytes:
         return bytes([n & 255, (n >> 8) & 255])
 
     @staticmethod
-    def pack_u32(n):
+    def pack_u32(n: int) -> bytes:
         return bytes([n & 255, (n >> 8) & 255, (n >> 16) & 255, (n >> 24) & 255])
 
     @staticmethod
-    def unpack_u16(data, offset):
+    def unpack_u16(data: bytearray, offset: int) -> int:
         return data[offset] | (data[offset + 1] << 8)
 
     @staticmethod
-    def unpack_u32(data, offset):
+    def unpack_u32(data: bytearray, offset: int) -> int:
         return (data[offset] | (data[offset + 1] << 8) |
                 (data[offset + 2] << 16) | (data[offset + 3] << 24))
 
