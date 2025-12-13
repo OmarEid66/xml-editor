@@ -497,7 +497,7 @@ class XMLController:
 
 """
     # ===================================================================
-    # SECTION 5: Compression and Decompression
+    # SECTION 6: Compression and Decompression
     # ===================================================================
 
     def compress_to_string(self) -> str:
