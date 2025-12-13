@@ -490,7 +490,7 @@ class XMLController:
             # final check
             final_user_count = len(json_data["users"])
 
-            return True, f"Successfully exported {final_user_count} users to JSON", None
+            return True, f"Successfully exported {final_user_count} users to JSON", json_data
 
         except Exception as e:
             return False, f"Failed to export to JSON using custom parser: {str(e)}" , None

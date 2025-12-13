@@ -1,8 +1,13 @@
 import argparse
 import json
 import sys
-from controllers import XMLController
-from utils import file_io
+import os
+
+# Add project root to path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from src.controllers import XMLController
+from src.utils import file_io
 
 parser = argparse.ArgumentParser(description="use XML editor in CLI mode")
 commands =parser.add_subparsers(dest='command', help='Available functionalities',required=True)
@@ -76,4 +81,3 @@ if args.command == 'json':
                 print(f"json data format: \n\n{json_data}")
         else:
             print("invalid argument")
-
