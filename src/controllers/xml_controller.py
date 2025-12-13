@@ -19,7 +19,7 @@ import textwrap
 import re
 import json
 from typing import List, Tuple, Optional
-from utils.binary_utils import ByteUtils
+# from utilities.binary_utils import ByteUtils
 
 
 class XMLController:
@@ -227,10 +227,14 @@ class XMLController:
     # SECTION 4: VALIDATION METHOD (XML Consistency Checker)
     # ===================================================================
 
+
     def validate(self):
         """
         Parses self.xml_string, detects structural errors, and returns a new string
         where errors are annotated with '<---' at the end of the problematic lines.
+
+        note: detect the structural errors of the xml file format and doesn't handle efficiently the data errors
+        (spelling mistakes choose a tag name that may not be the correct one to be chosen)
         """
         stack = []
 
@@ -290,6 +294,9 @@ class XMLController:
         """
         Attempts to fix the XML by balancing tags.
         Returns the fixed XML string and updates self.xml_string.
+
+        note: correct the structural errors of the xml file format and doesn't handle efficiently the data errors
+        (spelling mistakes choose a tag name that may not be the correct one to be chosen)
         """
         stack = []
         fixed_lines = []
@@ -493,9 +500,6 @@ class XMLController:
         except Exception as e:
             return False, "", f"Failed to export to JSON using custom parser: {str(e)}"
 
-
-
-"""
     # ===================================================================
     # SECTION 6: Compression and Decompression
     # ===================================================================
