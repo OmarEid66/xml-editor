@@ -11,8 +11,7 @@ Key Features:
 - Minify XML by removing all whitespace
 - Validate XML structure and semantics
 
-Author: [Your Name]
-Date: [Date]
+
 """
 
 import textwrap
