@@ -1,6 +1,7 @@
 """
 Base XML Window - Provides common functionality for XML-related UI windows.
 """
+import json
 from typing import Optional, Dict, List, Tuple, Any
 from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                                QPushButton, QTextEdit, QLineEdit, QFileDialog,
@@ -448,7 +449,7 @@ class BaseXMLWindow(QMainWindow):
             return
 
         self.output_text = self.xml_controller.export_to_json()
-        self.result_text_box.setText(str(self.output_text))
+        self.result_text_box.setText(json.dumps(self.output_text, indent=2, ensure_ascii=False))
         self.result_text_box.show()
 
     def visualize_network(self) -> None:
