@@ -26,10 +26,10 @@ class AnimatedBackground(QWidget):
 
     def init_nodes(self) -> None:
         """Initialize random nodes for the network animation."""
-        for _ in range(200):
+        for _ in range(550):
             node = {
-                'x': random.randint(0, 1200),
-                'y': random.randint(0, 700),
+                'x': random.randint(0, 1920),
+                'y': random.randint(0, 1080),
                 'vx': random.uniform(-0.5, 0.5),
                 'vy': random.uniform(-0.5, 0.5),
                 'color': random.choice([
@@ -246,7 +246,7 @@ class LandingWindow(QMainWindow):
             border: 2px solid rgba(100, 120, 150, 255);
             color: white;
         }
-        
+
         #browse_btn:pressed {
             background: rgba(30, 40, 55, 180);
         }
@@ -273,7 +273,7 @@ class LandingWindow(QMainWindow):
                 border: 2px solid rgba(100, 120, 150, 255);
                 color: white;
             }
-            
+
             #manual_btn:pressed {
                 background: rgba(30, 40, 55, 180);
             }

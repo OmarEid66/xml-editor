@@ -211,6 +211,7 @@ class GraphVisualizationWindow(QWidget):
         # Title and info
         title_label = QLabel("🔗 Social Network Graph Visualization")
         title_label.setStyleSheet("""
+            background-color: transparent;
             color: white;
             font-size: 18px;
             font-weight: bold;
@@ -222,8 +223,10 @@ class GraphVisualizationWindow(QWidget):
             f"Density: {self.metrics.get('density', 0):.3f}"
         )
         self.info_label.setStyleSheet("""
+            background-color: transparent;  
             color: rgba(200, 220, 240, 255);
             font-size: 13px;
+            font-weight: bold;
         """)
         
         title_layout.addWidget(title_label)
